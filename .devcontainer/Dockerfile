@@ -16,3 +16,6 @@ RUN a2enmod headers
 COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 
 EXPOSE 80
+
+# Add a default CMD to start Apache if you want
+CMD ["apache2ctl", "-D", "FOREGROUND"]
