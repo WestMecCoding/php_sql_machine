@@ -8,7 +8,7 @@ services:
       - "8080:80"
     volumes:
       # Mount your repo into /var/www/html so you can edit PHP files live
-      - .:/var/www/html
+      - ./myapp:/var/www/html/myapp
 
   mysql:
     image: mysql:8.0
