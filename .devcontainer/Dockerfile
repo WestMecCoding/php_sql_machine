@@ -1,4 +1,4 @@
-# Dockerfile
+# .devcontainer/Dockerfile
 FROM mcr.microsoft.com/devcontainers/php:0-8.2
 
 # Keep the container running
