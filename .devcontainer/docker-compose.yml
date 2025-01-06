@@ -1,23 +1,16 @@
+
 # .devcontainer/docker-compose.yml
 version: '3.8'
-
 services:
-  apache-php:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8080:80"
     volumes:
-      - ..:/var/www/html
-    depends_on:
-      - mysql
-    environment:
-      - PMA_HOST=mysql
-    networks:
-      - dev-network
+      - ../..:/workspaces:cached
+    command: sleep infinity
 
-  mysql:
+  db:
     image: mysql:8.0
     restart: unless-stopped
     environment:
@@ -28,26 +21,18 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - dev-network
+      - mysql-data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
       - "8081:80"
     environment:
-      - PMA_HOST=mysql
+      - PMA_HOST=db
       - PMA_USER=devuser
       - PMA_PASSWORD=devpass
     depends_on:
-      - mysql
-    networks:
-      - dev-network
-
-networks:
-  dev-network:
-    driver: bridge
+      - db
 
 volumes:
-  mysql_data:
+  mysql-data:
