@@ -1,7 +1,10 @@
 {
     "name": "PHP Development Environment",
     "dockerComposeFile": "docker-compose.yml",
-    "service": "apache-php",
-    "workspaceFolder": "/var/www/html",
-    "remoteUser": "vscode"
+    "service": "app",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "features": {
+        "ghcr.io/devcontainers/features/php:1": {}
+    },
+    "forwardPorts": [8080, 3306, 8081]
 }
