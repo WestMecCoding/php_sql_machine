@@ -1,5 +1,4 @@
-
-# .devcontainer/docker-compose.yml
+# docker-compose.yml
 version: '3.8'
 services:
   app:
@@ -7,12 +6,15 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ../..:/workspaces:cached
-    command: sleep infinity
+      - ../..:/workspaces
+    # Use Apache in foreground
+    command: apache2ctl -D FOREGROUND
+    # Optionally, if you want to forward port 8080 -> container 80
+    ports:
+      - "8080:80"
 
   db:
     image: mysql:8.0
-    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: devdb
@@ -25,14 +27,15 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    ports:
-      - "8081:80"
     environment:
       - PMA_HOST=db
       - PMA_USER=devuser
       - PMA_PASSWORD=devpass
+    ports:
+      - "8081:80"
     depends_on:
       - db
 
 volumes:
   mysql-data:
+
