@@ -1,8 +1,9 @@
+// .devcontainer/devcontainer.json
 {
     "name": "Ubuntu Development Environment",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "apache-php",
+    "remoteUser": "vscode",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -10,6 +11,5 @@
             ]
         }
     },
-    "remoteUser": "vscode",
     "postCreateCommand": "curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && vim +PlugInstall +qall"
 }
