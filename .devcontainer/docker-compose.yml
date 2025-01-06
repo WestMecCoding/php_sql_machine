@@ -1,17 +1,14 @@
-# docker-compose.yml
 version: '3.8'
+
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ../..:/workspaces
-    # Use Apache in foreground
-    command: apache2ctl -D FOREGROUND
-    # Optionally, if you want to forward port 8080 -> container 80
+  apache-php:
+    build: .
     ports:
       - "8080:80"
+    volumes:
+      - ../..:/workspaces
+    # If you already set CMD in the Dockerfile, remove command:
+    # command: apache2ctl -D FOREGROUND
 
   db:
     image: mysql:8.0
@@ -38,4 +35,3 @@ services:
 
 volumes:
   mysql-data:
-
