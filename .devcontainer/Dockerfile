@@ -1,36 +1,39 @@
-# 1. Start with the dev container base (same as before)
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+# Start from a lightweight Ubuntu image
+FROM ubuntu:22.04
 
-# 2. Disable interactive prompts and update
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -y install --no-install-recommends \
+# Configure apt and install dependencies
+RUN apt-get update \
+ && apt-get install -y \
+    apache2 \
+    php \
+    libapache2-mod-php \
+    php-mysql \
     vim \
     tmux \
-    apache2 \
-    libapache2-mod-php \
-    php \
-    php-cli \
-    php-mysql \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    git \
+    curl \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
 
-# 3. Copy your .vimrc and tmux.conf into the container
+# Copy custom Apache config that listens on port 80 (will be mapped to 8080)
+COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+
+# Enable Apache mods (optional if you need rewrites, etc.)
+RUN a2enmod rewrite
+
+# Copy your .vimrc and .tmux.conf into /home/vscode (the default user in Codespaces)
+# The container has a user named "vscode", so let's put them in that home directory
+RUN mkdir -p /home/vscode
 COPY .vimrc /home/vscode/.vimrc
-COPY tmux.conf /home/vscode/.tmux.conf
+COPY .tmux.conf /home/vscode/.tmux.conf
+RUN chown vscode:vscode /home/vscode/.vimrc /home/vscode/.tmux.conf
 
-# 4. Make sure /home/vscode is owned by the vscode user
-RUN chown -R vscode:vscode /home/vscode
-
-# 5. Enable any mods you need in Apache
-RUN a2enmod rewrite \
- && a2enmod headers
-
-# 6. (Optional) Copy your custom Apache config if you want 
-#    the DocumentRoot set to /workspaces, etc.
-# COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
-
-# 7. Expose port 80 for Apache
+# Expose port 80 inside the container
 EXPOSE 80
 
-# 8. Start Apache in the foreground
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+# Create a new "vscode" user if it doesn't exist, give sudo privileges
+RUN useradd -m vscode \
+ && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# By default, run Apache in the foreground
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
