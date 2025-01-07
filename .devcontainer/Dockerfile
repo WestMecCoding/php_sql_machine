@@ -34,7 +34,7 @@ RUN useradd -m vscode \
 USER vscode
 RUN mkdir -p /home/vscode/.vim/autoload \
  && curl -fLo /home/vscode/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim || exit 1
 
 # 5) Copy your .vimrc and .tmux.conf into /home/vscode
 USER root
