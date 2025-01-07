@@ -21,7 +21,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # 2) Copy custom Apache config (listen on port 80, docroot at /workspace, etc.)
-COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+COPY .devcontainer/apache-config.conf /etc/apache2/sites-available/000-default.conf
 
 # Enable Apache rewrite (if needed)
 RUN a2enmod rewrite
@@ -38,10 +38,10 @@ RUN mkdir -p /home/vscode/.vim/autoload \
 
 # 5) Copy your .vimrc and .tmux.conf into /home/vscode
 USER root
-COPY .vimrc /home/vscode/.vimrc
-COPY .tmux.conf /home/vscode/.tmux.conf
+COPY .devcontainer/.vimrc /home/vscode/.vimrc
+COPY .devcontainer/.tmux.conf /home/vscode/.tmux.conf
 RUN chown vscode:vscode /home/vscode/.vimrc /home/vscode/.tmux.conf
-
+RUN mkdir -p /workspace && chown vscode:vscode /workspace
 # 6) Expose port 80 (mapped to 8080 in docker-compose.yml)
 EXPOSE 80
 
