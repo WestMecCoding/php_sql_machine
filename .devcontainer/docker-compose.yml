@@ -1,25 +1,30 @@
+# .devcontainer/docker-compose.yml
 version: '3.8'
 
 services:
   php-apache:
+    # Build from Dockerfile in the parent folder context
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-    volumes:
-      # Mount the entire repository (..) into /workspace in the container
-      - ..:/workspace:cached
+
+    # Map container’s port 80 to localhost:8080
     ports:
-      # Expose port 80 in container on localhost:8080 in Codespaces
       - "8080:80"
-    # Link to MySQL
+
+    # Tells Docker to spin up MySQL first
     depends_on:
       - mysql
-    # This sets the default container user to vscode (created in the Dockerfile).
+
+    # Mount the whole repo in /workspace
+    volumes:
+      - ..:/workspace:cached
+
+    # Use the 'vscode' user created in the Dockerfile
     user: "vscode"
 
   mysql:
     image: mysql:8.0
-    # or use mysql:5.7 if you prefer older
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -31,15 +36,14 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:latest
+    restart: always
+    depends_on:
+      - mysql
     environment:
       PMA_HOST: mysql
       PMA_USER: devuser
       PMA_PASSWORD: devpass
-    restart: always
-    depends_on:
-      - mysql
     ports:
-      # Access phpMyAdmin on localhost:8081 in your Codespace
       - "8081:80"
 
 volumes:
