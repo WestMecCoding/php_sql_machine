@@ -1,10 +1,24 @@
 {
-    "name": "PHP Development Environment",
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "app",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "features": {
-        "ghcr.io/devcontainers/features/php:1": {}
-    },
-    "forwardPorts": [8080, 3306, 8081]
+  "name": "LAMP Dev Environment",
+  // The main service defined in docker-compose.yml that VS Code should connect to
+  "service": "php-apache",
+
+  // Points to the docker-compose file
+  "dockerComposeFile": "docker-compose.yml",
+
+  // Where VS Code should open your workspace
+  "workspaceFolder": "/workspace",
+
+  // Add any VS Code extensions you want preinstalled
+  "extensions": [
+    "ms-azuretools.vscode-docker",
+    "eamodio.gitlens",
+    "xdebug.php-debug"
+  ],
+
+  // Ensures your user has sudo in the container.
+  "remoteUser": "vscode",
+  
+  // (Optional) Forward extra ports if needed. 
+  "forwardPorts": [8080, 3306, 8081]
 }
