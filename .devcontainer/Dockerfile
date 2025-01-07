@@ -19,7 +19,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy custom Apache config
-COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+COPY .devcontainer/apache-config.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
 # Create a vscode user (if needed) and set up sudo
@@ -34,8 +34,8 @@ RUN curl -fLo /home/vscode/.vim/autoload/plug.vim --create-dirs \
 
 # Copy in .vimrc and .tmux.conf to the vscode home directory
 USER root
-COPY .vimrc /home/vscode/.vimrc
-COPY .tmux.conf /home/vscode/.tmux.conf
+COPY .devcontainer/.vimrc /home/vscode/.vimrc
+COPY .devcontainer/.tmux.conf /home/vscode/.tmux.conf
 RUN chown vscode:vscode /home/vscode/.vimrc /home/vscode/.tmux.conf
 
 # Now switch to vscode user to run PlugInstall
