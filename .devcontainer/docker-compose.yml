@@ -1,37 +1,46 @@
 version: '3.8'
 
 services:
-  apache-php:
-    build: .
-    ports:
-      - "8080:80"
+  php-apache:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
     volumes:
-      - ../..:/workspaces
-    # If you already set CMD in the Dockerfile, remove command:
-    # command: apache2ctl -D FOREGROUND
+      # Mount the entire repository (..) into /workspace in the container
+      - ..:/workspace:cached
+    ports:
+      # Expose port 80 in container on localhost:8080 in Codespaces
+      - "8080:80"
+    # Link to MySQL
+    depends_on:
+      - mysql
+    # This sets the default container user to vscode (created in the Dockerfile).
+    user: "vscode"
 
-  db:
+  mysql:
     image: mysql:8.0
+    # or use mysql:5.7 if you prefer older
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: devdb
       MYSQL_USER: devuser
       MYSQL_PASSWORD: devpass
-    ports:
-      - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - dbdata:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:latest
     environment:
-      - PMA_HOST=db
-      - PMA_USER=devuser
-      - PMA_PASSWORD=devpass
-    ports:
-      - "8081:80"
+      PMA_HOST: mysql
+      PMA_USER: devuser
+      PMA_PASSWORD: devpass
+    restart: always
     depends_on:
-      - db
+      - mysql
+    ports:
+      # Access phpMyAdmin on localhost:8081 in your Codespace
+      - "8081:80"
 
 volumes:
-  mysql-data:
+  dbdata:
